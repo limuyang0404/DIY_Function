@@ -1,0 +1,41 @@
+import numpy as np
+'''this function is made to get a three-dimensional dimensions with mirrored edges'''
+def label_expand_3d(label, expand=2):
+    im_size = label.shape[0]
+    batch_expanded = np.zeros([im_size*3, im_size*3, im_size*3])
+    cube_corner = np.flip(np.flip(np.flip(label, 0), 1), 2)#8 corner
+    cube_edge0 = np.flip(np.flip(label, 1), 2)#4 edge0
+    cube_edge1 = np.flip(np.flip(label, 0), 2)#4 edge1
+    cube_edge2 = np.flip(np.flip(label, 0), 1)#4 edge2
+    cube_face01 = np.flip(label, 2)#2 face01
+    cube_face02 = np.flip(label, 1)#2 face02
+    cube_face12 = np.flip(label, 0)#2 face12
+    batch_expanded[0:im_size, 0:im_size, 0:im_size] = cube_corner
+    batch_expanded[im_size:im_size*2, 0:im_size, 0:im_size] = cube_edge0
+    batch_expanded[im_size*2:im_size*3, 0:im_size, 0:im_size] = cube_corner
+    batch_expanded[0:im_size, im_size:im_size*2, 0:im_size] = cube_edge1
+    batch_expanded[im_size:im_size*2, im_size:im_size*2, 0:im_size] = cube_face01
+    batch_expanded[im_size*2:im_size*3, im_size:im_size*2, 0:im_size] = cube_edge1
+    batch_expanded[0:im_size, im_size*2:im_size*3, 0:im_size] = cube_corner
+    batch_expanded[im_size:im_size*2, im_size*2:im_size*3, 0:im_size] = cube_edge0
+    batch_expanded[im_size*2:im_size*3, im_size*2:im_size*3, 0:im_size] = cube_corner#low
+    batch_expanded[0:im_size, 0:im_size, im_size:im_size*2] = cube_edge2
+    batch_expanded[im_size:im_size * 2, 0:im_size, im_size:im_size*2] = cube_face02
+    batch_expanded[im_size * 2:im_size * 3, 0:im_size, im_size:im_size*2] = cube_edge2
+    batch_expanded[0:im_size, im_size:im_size * 2, im_size:im_size*2] = cube_face12
+    batch_expanded[im_size:im_size * 2, im_size:im_size * 2, im_size:im_size*2] = label#center of the large cube
+    batch_expanded[im_size * 2:im_size * 3, im_size:im_size * 2, im_size:im_size*2] = cube_face12
+    batch_expanded[0:im_size, im_size * 2:im_size * 3, im_size:im_size*2] = cube_edge2
+    batch_expanded[im_size:im_size * 2, im_size * 2:im_size * 3, im_size:im_size*2] = cube_face02
+    batch_expanded[im_size * 2:im_size * 3, im_size * 2:im_size * 3, im_size:im_size*2] = cube_edge2  # mid
+    batch_expanded[0:im_size, 0:im_size, im_size*2:im_size*3] = cube_corner
+    batch_expanded[im_size:im_size * 2, 0:im_size, im_size*2:im_size*3] = cube_edge0
+    batch_expanded[im_size * 2:im_size * 3, 0:im_size, im_size*2:im_size*3] = cube_corner
+    batch_expanded[0:im_size, im_size:im_size * 2, im_size*2:im_size*3] = cube_edge1
+    batch_expanded[im_size:im_size * 2, im_size:im_size * 2, im_size*2:im_size*3] = cube_face01
+    batch_expanded[im_size * 2:im_size * 3, im_size:im_size * 2, im_size*2:im_size*3] = cube_edge1
+    batch_expanded[0:im_size, im_size * 2:im_size * 3, im_size*2:im_size*3] = cube_corner
+    batch_expanded[im_size:im_size * 2, im_size * 2:im_size * 3, im_size*2:im_size*3] = cube_edge0
+    batch_expanded[im_size * 2:im_size * 3, im_size * 2:im_size * 3, im_size*2:im_size*3] = cube_corner  # high
+    batch_output = batch_expanded[im_size-expand:im_size*2+expand, im_size-expand:im_size*2+expand, im_size-expand:im_size*2+expand]
+    return batch_output
