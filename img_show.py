@@ -8,9 +8,9 @@ def img_show(img_path):
         size = str(size)+' B'
     elif size>=1024 and size<1024**2:
         size = str(round(size/1024, 2))+' KB'
-    elif size>=1048576:
+    elif size>=1024**2:
         size = str(round(size/1024**2, 2))+' MB'
     print(r"This img's size is", img.shape[1], '(w)*', img.shape[0], '(h)', r", and the file size is ", size)
     plt.imshow(img)
     plt.show()
-    return
+    return img
