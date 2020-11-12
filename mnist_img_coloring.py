@@ -42,7 +42,7 @@ def img_filename_class(filename_in, filename_out):
         img_rgb = np.concatenate((img1, img2, img3), axis=2)
         im = Image.fromarray(img_rgb)
         im = im.convert('RGB')
-        im.save(join(filename_out, file))
+        im.save(join(filename_out, file[0:-3]+'png'))
         m += 1
         print('the', m, 'th img have been classified')
 
