@@ -1,0 +1,25 @@
+import numpy as np
+from PIL import Image
+
+def album_boundry(img_path, album_boundry_0, album_boundry_1, mode = 'white'):
+    img = Image.open(img_path)
+    size_0 = img.size[1]
+    size_1 = img.size[0]
+    size_2 = len(img.split())
+    new_size0 = size_0 + size_0 % 2
+    new_size1 = size_1 + size_1 % 2
+    even_img = np.zeros((new_size0, new_size1, size_2))
+    even_img[0:size_0, 0:size_1] = img
+    filling_img = np.ones((new_size0 + 3 * album_boundry_0, new_size1 + 3 * album_boundry_1, size_2))
+    filling_img = filling_img * 255
+    if mode == 'black':
+        filling_img = np.zeros((new_size0 + 3 * album_boundry_0, new_size1 + 3 * album_boundry_1, size_2))
+    filling_img[album_boundry_0:album_boundry_0+new_size0//2, album_boundry_1:album_boundry_1+new_size1//2] = even_img[0:new_size0//2, 0:new_size1//2]
+    filling_img[album_boundry_0:album_boundry_0+new_size0//2, album_boundry_1*2+new_size1//2:album_boundry_1*2+new_size1] = even_img[0:new_size0//2, new_size1//2:new_size1]
+    filling_img[album_boundry_0*2+new_size0//2:album_boundry_0*2+new_size0, album_boundry_1:album_boundry_1+new_size1//2] = even_img[new_size0//2:new_size0, 0:new_size1//2]
+    filling_img[album_boundry_0*2+new_size0//2:album_boundry_0*2+new_size0, album_boundry_1*2+new_size1//2:album_boundry_1*2+new_size1] = even_img[new_size0//2:new_size0, new_size1//2:new_size1]
+    filling_img = filling_img.astype('uint8')
+    im = Image.fromarray(filling_img)
+    im = im.convert('RGB')
+    im.save(img_path[0:-4]+'_album_boundry'+img_path[-4:])
+    return
